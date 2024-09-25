@@ -1,11 +1,11 @@
-import Dashboard from './pages/Dashboard';
+import FileEditorView from './pages/FileEditorView';
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 const router = createBrowserRouter([
     {
         path: '/',
-        Component: Dashboard
+        Component: FileEditorView
     }
 ]);
 

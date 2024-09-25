@@ -1,12 +1,12 @@
-# 📝 Web SSH Client
+# 📝 Standalone Compiler
 
-This is a simple web ssh terminal app that allows you to connect to a remote server via ssh and execute commands. Using ssh2, socket.io, xterm.js, and express.
+This is a standalone compiler for writing and compiling code in the javascript and php languages. It is a simple and easy to use compiler that can be used to write and compile code in the javascript and php languages.
 
 ## Features
 
-- Connect to a remote server via ssh
-- Execute commands on the remote server
-- Display the output of the commands
-- Display the error messages if any
-- Display the command history
-- Clear the terminal
+- Write and compile code in the javascript and php languages
+- Simple and easy to use
+- Standalone compiler
+- No need to install any additional software
+
+## Usage
