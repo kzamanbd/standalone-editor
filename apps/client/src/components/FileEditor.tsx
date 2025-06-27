@@ -1,59 +1,84 @@
-import MonacoEditor from '@monaco-editor/react';
+import MonacoEditor, { OnMount } from '@monaco-editor/react';
+import { editor } from 'monaco-editor';
+import parser from 'php-parser';
+import { useEffect, useRef, useState } from 'react';
 
-import { useRef, useState } from 'react';
+const engine = new parser.Engine({
+    parser: { extractDoc: true, php7: true },
+    ast: { withPositions: true }
+});
 
-type EditorType = undefined | import('monaco-editor').editor.IStandaloneCodeEditor;
+type FileEditorType = {
+    language: string;
+    codeSnippet: string;
+    onChange?: (value: string) => void;
+};
 
-// Mapping of file extensions to Monaco languages
-const extensionToLanguageMap = {
-    '.js': 'javascript',
-    '.ts': 'typescript',
-    '.jsx': 'javascript',
-    '.tsx': 'typescript',
-    '.py': 'python',
-    '.cpp': 'cpp',
-    '.html': 'html',
-    '.css': 'css',
-    '.json': 'json',
-    '.xml': 'xml',
-    '.yml': 'yaml',
-    '.yaml': 'yaml',
-    '.md': 'markdown',
-    '.sh': 'shell',
-    '.sql': 'sql',
-    '.java': 'java',
-    '.php': 'php',
-    '.rb': 'ruby',
-    '.go': 'go',
-    '.cs': 'csharp',
-    '.swift': 'swift',
-    '.lock': 'json'
-} as Record<string, string>;
+const FileEditor = (props: FileEditorType) => {
+    const editorRef = useRef<editor.IStandaloneCodeEditor>();
+    const monacoRef = useRef<typeof import('monaco-editor')>();
+    const [value, setValue] = useState(props.codeSnippet);
 
-// Function to get language based on file extension
-function getLanguageFromExtension(filename: string) {
-    const ext = filename.slice(Math.max(0, filename.lastIndexOf('.')) || Infinity);
-    return extensionToLanguageMap[ext] || 'plaintext'; // Default to 'plaintext'
-}
-
-const FileEditor = () => {
-    const editorRef = useRef<EditorType>(undefined);
-    const [fileContent, setFileContent] = useState(`// Welcome to the file editor`);
-
-    function handleEditorDidMount(editor: EditorType) {
+    const handleEditorDidMount: OnMount = (editor, monaco) => {
         editorRef.current = editor;
-        editorRef.current.setValue(fileContent);
-        editorRef.current.getModel()?.updateOptions({ tabSize: 4 });
-        editorRef.current.getModel()?.updateOptions({ insertSpaces: true });
-    }
+        monacoRef.current = monaco;
+        editor.setValue(value);
+    };
+
+    const phpValidator = () => {
+        if (!editorRef.current || !monacoRef.current) return;
+        if (props.language !== 'php') return;
+
+        const monaco = monacoRef.current;
+        const model = editorRef.current.getModel();
+        if (!model) return;
+
+        try {
+            engine.parseCode(value, 'server.php');
+            // Clear existing markers if successful
+            monaco.editor.setModelMarkers(model, 'php', []);
+        } catch (e: unknown) {
+            const error = e as {
+                lineNumber?: number;
+                column?: number;
+                message?: string;
+            };
+            monaco.editor.setModelMarkers(model, 'php', [
+                {
+                    startLineNumber: error.lineNumber || 1,
+                    startColumn: error.column || 1,
+                    endLineNumber: error.lineNumber || 1,
+                    endColumn: (error.column || 1) + 1,
+                    message: error.message || 'Syntax error',
+                    severity: monaco.MarkerSeverity.Error
+                }
+            ]);
+        }
+    };
+
+    const onChange = (code: string | undefined) => {
+        if (!code || !editorRef.current || !monacoRef.current) return;
+
+        setValue(code);
+        phpValidator();
+    };
+
+    useEffect(() => {
+        setValue(props.codeSnippet);
+    }, [props.codeSnippet]);
 
     return (
         <MonacoEditor
-            height="85vh"
-            defaultValue={fileContent}
+            height="90vh"
+            value={value}
+            onChange={onChange}
             onMount={handleEditorDidMount}
-            onChange={(value) => setFileContent(value || '')}
-            defaultLanguage={getLanguageFromExtension('server.js')}
+            language={props.language}
+            options={{
+                minimap: {
+                    enabled: false
+                }
+            }}
         />
     );
 };
