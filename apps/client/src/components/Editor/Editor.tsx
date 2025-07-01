@@ -1,5 +1,5 @@
 import MonacoEditor, { OnMount } from '@monaco-editor/react';
-import { editor } from 'monaco-editor';
+import * as monaco from 'monaco-editor';
 import parser from 'php-parser';
 import { useEffect, useRef, useState } from 'react';
 
@@ -8,15 +8,17 @@ const engine = new parser.Engine({
     ast: { withPositions: true }
 });
 
-type FileEditorType = {
+type Monaco = typeof monaco;
+
+type EditorProps = {
     language: string;
     codeSnippet: string;
     onChange?: (value: string) => void;
 };
 
-const FileEditor = (props: FileEditorType) => {
-    const editorRef = useRef<editor.IStandaloneCodeEditor>();
-    const monacoRef = useRef<typeof import('monaco-editor')>();
+const FileEditor = (props: EditorProps) => {
+    const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>();
+    const monacoRef = useRef<Monaco>();
     const [value, setValue] = useState(props.codeSnippet);
 
     const handleEditorDidMount: OnMount = (editor, monaco) => {

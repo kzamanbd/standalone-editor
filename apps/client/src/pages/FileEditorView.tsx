@@ -1,4 +1,4 @@
-import FileEditor from '@/components/FileEditor';
+import FileEditor from '@/components/Editor/Editor';
 import { CODE_SNIPPETS, LANGUAGE_VERSIONS } from '@/utils/constants';
 import { useState } from 'react';
 
@@ -37,3 +37,4 @@ const FileEditorView = () => {
 };
 
 export default FileEditorView;
+
