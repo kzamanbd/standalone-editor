@@ -1,4 +1,4 @@
-import FileEditor from '@/components/Editor/Editor';
+import FileEditor from '@/components/Editor';
 import { CODE_SNIPPETS, LANGUAGE_VERSIONS } from '@/utils/constants';
 import { useState } from 'react';
 
