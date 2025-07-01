@@ -1,7 +1,7 @@
 import MonacoEditor, { Monaco, OnMount } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { useEffect, useRef, useState } from 'react';
-import { phpValidator } from './validator';
+import { validateCode } from './validators';
 
 type EditorProps = {
     language: string;
@@ -23,10 +23,11 @@ const FileEditor = (props: EditorProps) => {
     const onChange = (code: string | undefined) => {
         if (!code || !editorRef.current || !monacoRef.current) return;
 
-        if (props.language === 'php') {
-            phpValidator(code, editorRef.current, monacoRef.current);
-        }
+        // Simple validation call
+        validateCode(code, props.language, editorRef.current, monacoRef.current);
+
         setValue(code);
+        props.onChange?.(code);
     };
 
     useEffect(() => {

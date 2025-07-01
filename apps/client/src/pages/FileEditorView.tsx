@@ -17,8 +17,8 @@ const FileEditorView = () => {
         setSelectedLanguage(language);
     };
     return (
-        <div className="p-4">
-            <div className="flex gap-4 justify-between items-center mb-4">
+        <>
+            <div className="flex gap-4 justify-between items-center mb-4 border-b border-gray-200 p-4">
                 <h1>File Editor({selectedLanguage})</h1>
                 <select
                     value={selectedLanguage}
@@ -32,7 +32,7 @@ const FileEditorView = () => {
                 </select>
             </div>
             <FileEditor codeSnippet={value} language={selectedLanguage} />
-        </div>
+        </>
     );
 };
 
