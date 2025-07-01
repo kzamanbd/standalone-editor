@@ -1,14 +1,7 @@
 import MonacoEditor, { Monaco, OnMount } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
-import parser from 'php-parser';
 import { useEffect, useRef, useState } from 'react';
-
-const engine = new parser.Engine({
-    parser: { extractDoc: true, php7: true },
-    ast: { withPositions: true }
-});
-
-type StandaloneEditor = editor.IStandaloneCodeEditor;
+import { phpValidator } from './validator';
 
 type EditorProps = {
     language: string;
@@ -17,7 +10,7 @@ type EditorProps = {
 };
 
 const FileEditor = (props: EditorProps) => {
-    const editorRef = useRef<StandaloneEditor>();
+    const editorRef = useRef<editor.IStandaloneCodeEditor>();
     const monacoRef = useRef<Monaco>();
     const [value, setValue] = useState(props.codeSnippet);
 
@@ -27,41 +20,12 @@ const FileEditor = (props: EditorProps) => {
         editor.setValue(value);
     };
 
-    const phpValidator = (code: string) => {
-        if (!editorRef.current || !monacoRef.current) return;
-        if (props.language !== 'php') return;
-
-        const monaco = monacoRef.current;
-        const model = editorRef.current.getModel();
-        if (!model) return;
-
-        try {
-            engine.parseCode(code, 'server.php');
-            // Clear existing markers if successful
-            monaco.editor.setModelMarkers(model, 'php', []);
-        } catch (e: unknown) {
-            const error = e as {
-                lineNumber?: number;
-                column?: number;
-                message?: string;
-            };
-            monaco.editor.setModelMarkers(model, 'php', [
-                {
-                    startLineNumber: error.lineNumber || 1,
-                    startColumn: error.column || 1,
-                    endLineNumber: error.lineNumber || 1,
-                    endColumn: (error.column || 1) + 1,
-                    message: error.message || 'Syntax error',
-                    severity: monaco.MarkerSeverity.Error
-                }
-            ]);
-        }
-    };
-
     const onChange = (code: string | undefined) => {
         if (!code || !editorRef.current || !monacoRef.current) return;
 
-        phpValidator(code);
+        if (props.language === 'php') {
+            phpValidator(code, editorRef.current, monacoRef.current);
+        }
         setValue(code);
     };
 
