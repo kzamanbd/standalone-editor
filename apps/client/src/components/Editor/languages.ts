@@ -9,26 +9,40 @@ export const registerLogLanguage = (monaco: Monaco) => {
             root: [
                 [/\b(INFO|ERROR|WARN|DEBUG|NOTICE|CRITICAL)\b/, 'log-level'],
                 [/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]/, 'timestamp'],
-                [/\b(Exception|Trace|Stack)\b/, 'exception'],
-                [/\bGET|POST|PUT|DELETE\b/, 'http'],
+                [/\b(Exception|Error|Trace|Stack|Warning|Notice)\b/, 'exception'],
+                [/\bGET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS\b/, 'http'],
                 [/https?:\/\/[^\s]+/, 'url'],
-                [/".*?"/, 'string']
+                [/".*?"/, 'string'],
+                [/PHP \w+:/, 'php-error'],
+                [/line \d+/, 'line-number'],
+                [/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/, 'ip-address'],
+                [/\b\w+\.php\b/, 'filename']
             ]
         }
     });
 
     monaco.editor.defineTheme('logTheme', {
-        base: 'vs-dark',
+        base: 'vs',
         inherit: true,
         rules: [
-            { token: 'log-level', foreground: 'ffa500', fontStyle: 'bold' },
-            { token: 'timestamp', foreground: '808080' },
-            { token: 'exception', foreground: 'ff0000', fontStyle: 'italic' },
-            { token: 'http', foreground: '00ffff' },
-            { token: 'url', foreground: '00bfff', fontStyle: 'underline' },
-            { token: 'string', foreground: '90ee90' }
+            { token: 'log-level', foreground: '0000ff', fontStyle: 'bold' }, // Blue
+            { token: 'timestamp', foreground: '666666' }, // Dark gray
+            { token: 'exception', foreground: 'ff0000', fontStyle: 'bold' }, // Red
+            { token: 'http', foreground: '008080', fontStyle: 'bold' }, // Teal
+            { token: 'url', foreground: '0066cc', fontStyle: 'underline' }, // Blue
+            { token: 'string', foreground: '008000' }, // Green
+            { token: 'php-error', foreground: 'cc0000', fontStyle: 'bold' }, // Dark red
+            { token: 'line-number', foreground: '666666', fontStyle: 'italic' }, // Gray
+            { token: 'ip-address', foreground: '993399' }, // Purple
+            { token: 'filename', foreground: '800000', fontStyle: 'bold' } // Maroon
         ],
-        colors: {}
+        colors: {
+            'editor.background': '#ffffff',
+            'editor.foreground': '#000000',
+            'editor.lineHighlightBackground': '#f0f0f0',
+            'editorLineNumber.foreground': '#999999',
+            'editor.selectionBackground': '#b3d4fc'
+        }
     });
 };
 

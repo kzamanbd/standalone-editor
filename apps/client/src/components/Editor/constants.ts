@@ -72,39 +72,6 @@ users = [
 for user in users:
     user.print_info()
 `,
-
-    java: `// java
-public class User {
-    String name;
-    int age;
-
-    User(String name, int age) {
-        this.name = name;
-        this.age = age;
-    }
-
-    boolean isAdult() {
-        return age >= 18;
-    }
-
-    void printInfo() {
-        String status = isAdult() ? "an adult" : "a minor";
-        System.out.println(name + " is " + status + ".");
-    }
-
-    public static void main(String[] args) {
-        User[] users = {
-            new User("Alex", 22),
-            new User("Bob", 16),
-            new User("Charlie", 30)
-        };
-        for (User user : users) {
-            user.printInfo();
-        }
-    }
-}
-`,
-
     php: `<?php
 
 class User {

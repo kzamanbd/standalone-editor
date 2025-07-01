@@ -1,6 +1,7 @@
 import MonacoEditor, { Monaco, OnMount } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { useEffect, useRef, useState } from 'react';
+import { registerLanguages } from './languages';
 import { validateCode } from './validators';
 
 type EditorProps = {
@@ -31,6 +32,13 @@ const FileEditor = ({ language, codeSnippet, onChange }: EditorProps) => {
         editorRef.current = editor;
         monacoRef.current = monaco;
         editor.setValue(value);
+        // Register language and theme if needed
+        registerLanguages(language, monaco);
+        if (language === 'log') {
+            monaco.editor.setTheme('logTheme');
+        } else {
+            monaco.editor.setTheme('vs-light');
+        }
     };
 
     const handleOnChange = (code: string | undefined) => {
@@ -45,6 +53,15 @@ const FileEditor = ({ language, codeSnippet, onChange }: EditorProps) => {
 
     useEffect(() => {
         setValue(codeSnippet);
+        // Register language and theme on language change
+        if (monacoRef.current) {
+            registerLanguages(language, monacoRef.current);
+            if (language === 'log') {
+                monacoRef.current.editor.setTheme('logTheme');
+            } else {
+                monacoRef.current.editor.setTheme('vs-light');
+            }
+        }
     }, [codeSnippet, language]);
 
     return (
