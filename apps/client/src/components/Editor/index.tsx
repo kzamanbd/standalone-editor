@@ -9,10 +9,23 @@ type EditorProps = {
     onChange?: (value: string) => void;
 };
 
-const FileEditor = (props: EditorProps) => {
+type EditorOptions = editor.IStandaloneEditorConstructionOptions;
+
+const defaultOptions: EditorOptions = {
+    minimap: {
+        enabled: false
+    },
+    theme: 'vs-light',
+    fontSize: 14,
+    fontFamily: 'monospace',
+    fontWeight: 'normal',
+    fontLigatures: false
+};
+
+const FileEditor = ({ language, codeSnippet, onChange }: EditorProps) => {
     const editorRef = useRef<editor.IStandaloneCodeEditor>();
     const monacoRef = useRef<Monaco>();
-    const [value, setValue] = useState(props.codeSnippet);
+    const [value, setValue] = useState(codeSnippet);
 
     const handleEditorDidMount: OnMount = (editor, monaco) => {
         editorRef.current = editor;
@@ -20,32 +33,28 @@ const FileEditor = (props: EditorProps) => {
         editor.setValue(value);
     };
 
-    const onChange = (code: string | undefined) => {
+    const handleOnChange = (code: string | undefined) => {
         if (!code || !editorRef.current || !monacoRef.current) return;
 
         // Simple validation call
-        validateCode(code, props.language, editorRef.current, monacoRef.current);
+        validateCode(code, language, editorRef.current, monacoRef.current);
 
         setValue(code);
-        props.onChange?.(code);
+        onChange?.(code);
     };
 
     useEffect(() => {
-        setValue(props.codeSnippet);
-    }, [props.codeSnippet]);
+        setValue(codeSnippet);
+    }, [codeSnippet, language]);
 
     return (
         <MonacoEditor
             height="90vh"
             value={value}
-            onChange={onChange}
+            language={language}
+            onChange={handleOnChange}
             onMount={handleEditorDidMount}
-            language={props.language}
-            options={{
-                minimap: {
-                    enabled: false
-                }
-            }}
+            options={defaultOptions}
         />
     );
 };

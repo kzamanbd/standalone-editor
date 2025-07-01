@@ -3,12 +3,11 @@ import { CODE_SNIPPETS } from '@/components/Editor/constants';
 import { useState } from 'react';
 
 const FileEditorView = () => {
-    const options = Object.keys(CODE_SNIPPETS)
-        .map((language) => ({
-            value: language,
-            label: language.charAt(0).toUpperCase() + language.slice(1)
-        }))
-        .sort((a, b) => a.label.localeCompare(b.label));
+    const options = Object.keys(CODE_SNIPPETS).map((language) => ({
+        value: language,
+        label: language
+    }));
+
     const [selectedLanguage, setSelectedLanguage] = useState(options[0].value);
     const [value, setValue] = useState(
         CODE_SNIPPETS[selectedLanguage as keyof typeof CODE_SNIPPETS]
@@ -20,7 +19,7 @@ const FileEditorView = () => {
     };
     return (
         <>
-            <div className="flex gap-4 justify-between items-center mb-4 border-b border-gray-200 p-4">
+            <div className="flex gap-4 justify-between items-center mb-4 border-b border-gray-200 py-2 px-6">
                 <h1>File Editor({selectedLanguage})</h1>
                 <select
                     value={selectedLanguage}
