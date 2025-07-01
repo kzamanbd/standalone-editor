@@ -23,7 +23,7 @@ const defaultOptions: EditorOptions = {
     fontLigatures: false
 };
 
-const FileEditor = ({ language, codeSnippet, onChange }: EditorProps) => {
+const Editor = ({ language, codeSnippet, onChange }: EditorProps) => {
     const editorRef = useRef<editor.IStandaloneCodeEditor>();
     const monacoRef = useRef<Monaco>();
     const [value, setValue] = useState(codeSnippet);
@@ -76,5 +76,5 @@ const FileEditor = ({ language, codeSnippet, onChange }: EditorProps) => {
     );
 };
 
-export default FileEditor;
+export default Editor;
 
