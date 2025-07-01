@@ -1,12 +1,14 @@
 import FileEditor from '@/components/Editor';
-import { CODE_SNIPPETS, LANGUAGE_VERSIONS } from '@/utils/constants';
+import { CODE_SNIPPETS } from '@/components/Editor/constants';
 import { useState } from 'react';
 
 const FileEditorView = () => {
-    const options = Object.keys(LANGUAGE_VERSIONS).map((language) => ({
-        value: language,
-        label: language
-    }));
+    const options = Object.keys(CODE_SNIPPETS)
+        .map((language) => ({
+            value: language,
+            label: language.charAt(0).toUpperCase() + language.slice(1)
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label));
     const [selectedLanguage, setSelectedLanguage] = useState(options[0].value);
     const [value, setValue] = useState(
         CODE_SNIPPETS[selectedLanguage as keyof typeof CODE_SNIPPETS]

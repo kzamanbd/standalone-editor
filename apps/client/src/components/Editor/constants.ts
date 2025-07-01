@@ -1,14 +1,5 @@
-export const LANGUAGE_VERSIONS = {
-    javascript: '18.15.0',
-    typescript: '5.0.3',
-    python: '3.10.0',
-    java: '15.0.2',
-    php: '8.2.3',
-    log: '1.0.0'
-};
-
 export const CODE_SNIPPETS = {
-    javascript: ` // javascript
+    javascript: `// javascript
 function createUser(name, age) {
     return { name, age };
 }
@@ -31,7 +22,7 @@ const users = [
 users.forEach(printUserInfo);
 `,
 
-    typescript: ` // typescript
+    typescript: `// typescript
 type User = {
     name: string;
     age: number;
@@ -59,7 +50,7 @@ const users: User[] = [
 users.forEach(printUserInfo);
 `,
 
-    python: ` // python
+    python: `// python
 class User:
     def __init__(self, name, age):
         self.name = name
@@ -82,7 +73,7 @@ for user in users:
     user.print_info()
 `,
 
-    java: ` // java
+    java: `// java
 public class User {
     String name;
     int age;
