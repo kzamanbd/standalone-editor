@@ -1,5 +1,5 @@
-import MonacoEditor, { OnMount } from '@monaco-editor/react';
-import * as monaco from 'monaco-editor';
+import MonacoEditor, { Monaco, OnMount } from '@monaco-editor/react';
+import { type editor } from 'monaco-editor';
 import parser from 'php-parser';
 import { useEffect, useRef, useState } from 'react';
 
@@ -8,7 +8,7 @@ const engine = new parser.Engine({
     ast: { withPositions: true }
 });
 
-type Monaco = typeof monaco;
+type StandaloneEditor = editor.IStandaloneCodeEditor;
 
 type EditorProps = {
     language: string;
@@ -17,7 +17,7 @@ type EditorProps = {
 };
 
 const FileEditor = (props: EditorProps) => {
-    const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>();
+    const editorRef = useRef<StandaloneEditor>();
     const monacoRef = useRef<Monaco>();
     const [value, setValue] = useState(props.codeSnippet);
 
@@ -27,7 +27,7 @@ const FileEditor = (props: EditorProps) => {
         editor.setValue(value);
     };
 
-    const phpValidator = () => {
+    const phpValidator = (code: string) => {
         if (!editorRef.current || !monacoRef.current) return;
         if (props.language !== 'php') return;
 
@@ -36,7 +36,7 @@ const FileEditor = (props: EditorProps) => {
         if (!model) return;
 
         try {
-            engine.parseCode(value, 'server.php');
+            engine.parseCode(code, 'server.php');
             // Clear existing markers if successful
             monaco.editor.setModelMarkers(model, 'php', []);
         } catch (e: unknown) {
@@ -61,8 +61,8 @@ const FileEditor = (props: EditorProps) => {
     const onChange = (code: string | undefined) => {
         if (!code || !editorRef.current || !monacoRef.current) return;
 
+        phpValidator(code);
         setValue(code);
-        phpValidator();
     };
 
     useEffect(() => {
