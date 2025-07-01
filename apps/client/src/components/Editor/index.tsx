@@ -1,32 +1,39 @@
 import MonacoEditor, { Monaco, OnMount } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { registerLanguages } from './languages';
 import { validateCode } from './validators';
+
+type EditorOptions = editor.IStandaloneEditorConstructionOptions;
 
 type EditorProps = {
     language: string;
     codeSnippet: string;
     onChange?: (value: string) => void;
+    options?: EditorOptions;
 };
 
-type EditorOptions = editor.IStandaloneEditorConstructionOptions;
-
-const defaultOptions: EditorOptions = {
-    minimap: {
-        enabled: false
-    },
-    theme: 'vs-light',
-    fontSize: 14,
-    fontFamily: 'monospace',
-    fontWeight: 'normal',
-    fontLigatures: false
-};
-
-const Editor = ({ language, codeSnippet, onChange }: EditorProps) => {
+const Editor = ({ options = {}, language, codeSnippet, onChange }: EditorProps) => {
     const editorRef = useRef<editor.IStandaloneCodeEditor>();
     const monacoRef = useRef<Monaco>();
     const [value, setValue] = useState(codeSnippet);
+
+    const defaultOptions: EditorOptions = useMemo(() => {
+        return {
+            tabSize: 4,
+            insertSpaces: true,
+            automaticLayout: true,
+            minimap: { enabled: false },
+            scrollBeyondLastLine: false,
+            lineNumbers: 'on',
+            wordWrap: 'on',
+            fontSize: 14,
+            fontFamily: 'monospace',
+            fontWeight: 'normal',
+            fontLigatures: true,
+            ...options
+        };
+    }, [options]);
 
     const handleEditorDidMount: OnMount = (editor, monaco) => {
         editorRef.current = editor;
